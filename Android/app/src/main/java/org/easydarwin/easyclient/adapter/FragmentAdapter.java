@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012-2016 EasyDarwin.ORG.  All rights reserved.
+	Copyright (c) 2012-2017 EasyDarwin.ORG.  All rights reserved.
 	Github: https://github.com/EasyDarwin
 	WEChat: EasyDarwin
 	Website: http://www.easydarwin.org
@@ -27,7 +27,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     private AndroidFragment fragmentAndroid;
     private NVRFragment fragmentNvr;
 
-    private String[] titles = new String[]{"EasyCamera", "手机直播", "EasyNVR"};
+    private String[] titles = new String[]{"EasyCamera", "移动设备", "EasyNVR"};
 
     public void set(){};
 

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012-2016 EasyDarwin.ORG.  All rights reserved.
+	Copyright (c) 2012-2017 EasyDarwin.ORG.  All rights reserved.
 	Github: https://github.com/EasyDarwin
 	WEChat: EasyDarwin
 	Website: http://www.easydarwin.org
@@ -7,9 +7,7 @@
 package org.easydarwin.easyclient.config;
 
 /**
- * 类DarwinConfig的实现描述：//TODO 类实现描述
- *
- * @author HELONG 2016/3/16 17:22
+ * 类DarwinConfig的实现描述：
  */
 public class DarwinConfig {
 
@@ -26,7 +24,7 @@ public class DarwinConfig {
 
     public static final String CAM_URL ="cam_url";
     //默认IP地址
-    public static final String DEFAULT_SERVER_IP="121.40.50.44";
+    public static final String DEFAULT_SERVER_IP="cloud.easydarwin.org";
     public static final String DEFAULT_SERVER_PORT="10000";
 
     public static final String DEV_SERIAL = "serial";

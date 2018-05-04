@@ -1,6 +1,8 @@
 # EasyClient #
 
-EasyClient是EasyDarwin开源流媒体云平台的客户端实现，包含：Windows、Android、iOS三个部分，其主要功能包括：
+### ！！！EasyClient是配套EasyDarwin云平台使用的，是平台整体的App客户端部分，类似于萤石、360水滴、小米、i耳目、Dropcam的客户端！ ###
+
+EasyClient是EasyDarwin开源流媒体云平台的客户端实现，包含：Windows、Android、iOS、H5(支持微信)四个部分，其主要功能包括：
 
 1. 云平台设备列表获取；
 2. 设备实时码流请求与播放；
@@ -17,13 +19,9 @@ EasyClient是EasyDarwin开源流媒体云平台的客户端实现，包含：Win
 
 - iOS：[https://itunes.apple.com/us/app/easyclient/id1141850816](https://itunes.apple.com/us/app/easyclient/id1141850816 "EasyClient iOS")
 
-![EasyClient iOS](http://www.easydarwin.org/github/images/firimeasyclientios.png)
+![EasyClient iOS](http://www.easydarwin.org/github/images/firimeasyclientios170228.png)
 
-## 更新记录 ##
-
-### EasyClient(Windows) v1.0.16.08.15 ###
-
-* EasyClient(Windows) 作为EasyCMS云平台的客户端，实现获取设备列表，获取设备流URI进行直播,摄像机PTZ云台控制等功能；
+H5版本：[http://www.easydarwin.org/easyclient/](http://www.easydarwin.org/easyclient/ "EasyClient H5")
 
 
 ## 获取更多信息 ##
@@ -32,6 +30,6 @@ EasyClient是EasyDarwin开源流媒体云平台的客户端实现，包含：Win
 
 WEB：[www.EasyDarwin.org](http://www.easydarwin.org)
 
-Copyright &copy; EasyDarwin.org 2012-2016
+Copyright &copy; EasyDarwin.org 2012-2017
 
 ![EasyDarwin](http://www.easydarwin.org/skin/easydarwin/images/wx_qrcode.jpg)

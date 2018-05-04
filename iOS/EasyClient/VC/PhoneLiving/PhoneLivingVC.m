@@ -8,7 +8,7 @@
     NetRequestTool *_requestTool;
       NSMutableArray *_dataArr;
     UiotHUD *_HUD;
-    NSString *_urlStr;
+
     EasyUrl *_urlModel;
 }
 @property(nonatomic,strong) NetRequestTool *requestTool;
@@ -26,11 +26,11 @@ static NSString *cellIdentifier1 = @"Cell1";
     _dataArr = [NSMutableArray array];
     self.requestTool = [[NetRequestTool alloc]init];
     self.requestTool.delegate = self;
-    NSString *cmsIp = [[NSUserDefaults standardUserDefaults] stringForKey:@"cms_ip"];
-    NSString *cmsPort = [[NSUserDefaults standardUserDefaults] stringForKey:@"cms_port"];
-    
-    _urlStr= @"http://%@:%@/api/getdevicelist?AppType=EasyCamera&TerminalType=Android";
-    _urlStr = [NSString stringWithFormat:_urlStr, cmsIp,cmsPort];
+//    NSString *cmsIp = [[NSUserDefaults standardUserDefaults] stringForKey:@"cms_ip"];
+//    NSString *cmsPort = [[NSUserDefaults standardUserDefaults] stringForKey:@"cms_port"];
+//    
+//    _urlStr= @"http://%@:%@/api/getdevicelist?AppType=EasyCamera&TerminalType=Android";
+//    _urlStr = [NSString stringWithFormat:_urlStr, cmsIp,cmsPort];
 }
 
 - (void)initSomeView
@@ -67,6 +67,7 @@ static NSString *cellIdentifier1 = @"Cell1";
 #pragma mark -  receiveData
 - (void)receiveData:(NSMutableArray *)sender
 {
+    [_dataArr removeAllObjects];
     _dataArr = sender;
     [self.collectionView.mj_header endRefreshing];
     [_HUD hide:YES afterDelay:0.5];
@@ -111,23 +112,55 @@ static NSString *cellIdentifier1 = @"Cell1";
     
     EasyCamera *model = _dataArr[indexPath.row];
     AFHTTPSessionManager * manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"html/text",@"text/plain", nil];
-    NSString *urlStr =[NSString stringWithFormat:@"http://%@:%@/api/getdevicestream?device=%@&channel=0&protocol=RTSP&reserve=1",cmsIp,cmsPort,model.serial];
-    [manager POST:urlStr parameters:nil progress:^(NSProgress * _Nonnull uploadProgress) {
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"html/text",@"text/plain", nil];
+    NSString *urlStr =[NSString stringWithFormat:@"http://%@:%@/api/v1/startdevicestream?device=%@&channel=1&protocol=RTSP&reserve=1",cmsIp,cmsPort,model.serial];
+    [manager GET:urlStr parameters:nil progress:^(NSProgress * _Nonnull uploadProgress) {
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSDictionary *easyDic = [responseObject objectForKey:@"EasyDarwin"];
+        NSDictionary *easyDic;
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            easyDic = [responseObject objectForKey:@"EasyDarwin"];
+        }else{
+            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+            easyDic = [dict objectForKey:@"EasyDarwin"];
+        }
         NSDictionary *headerDic =  [easyDic objectForKey:@"Header"];
         NSDictionary *bodyDic =  [easyDic objectForKey:@"Body"];
         if ([[headerDic objectForKey:@"ErrorNum"] isEqualToString:@"200"]) {
             _urlModel = [[EasyUrl alloc]init];
             _urlModel.channel = [bodyDic objectForKey:@"Channel"];
-            _urlModel.protocol = [bodyDic objectForKey:@"Protocol"];
+//            _urlModel.protocol = [bodyDic objectForKey:@"Protocol"];
             _urlModel.reserve = [bodyDic objectForKey:@"Reserve"];
             _urlModel.serial = [bodyDic objectForKey:@"Serial"];
-            _urlModel.url = [bodyDic objectForKey:@"URL"];
-            PlayViewController *playVC = [[PlayViewController alloc]init];
-            playVC.urlModel = _urlModel;
-            [self presentViewController:playVC animated:YES completion:nil];
+//            _urlModel.url = [bodyDic objectForKey:@"URL"];
+//            PlayViewController *playVC = [[PlayViewController alloc]init];
+//            playVC.urlModel = _urlModel;
+//            [self presentViewController:playVC animated:YES completion:nil];
+            NSString *serviceString = [bodyDic objectForKey:@"Service"];
+            NSArray *urlArray = [serviceString componentsSeparatedByString:@";"];
+            NSString *ip = [urlArray[0] componentsSeparatedByString:@"="][1];
+            NSString *port = [urlArray[1] componentsSeparatedByString:@"="][1];
+            NSString *urlStrGetstream =[NSString stringWithFormat:@"http://%@:%@/api/v1/getdevicestream?device=%@&channel=1&protocol=RTSP&reserve=1",ip,port,model.serial];
+            AFHTTPSessionManager * managerGetstream = [AFHTTPSessionManager manager];
+            managerGetstream.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"html/text",@"text/plain", nil];
+            [managerGetstream GET:urlStrGetstream parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                NSDictionary *serverDic = [responseObject objectForKey:@"EasyDarwin"];
+                NSDictionary *serverHeaderDic =  [serverDic objectForKey:@"Header"];
+                NSDictionary *serverBodyDic =  [serverDic objectForKey:@"Body"];
+                if ([[serverHeaderDic objectForKey:@"ErrorNum"] isEqualToString:@"200"]) {
+                    _urlModel.url = [serverBodyDic objectForKey:@"URL"];
+                    _urlModel.protocol = [serverBodyDic objectForKey:@"Protocol"];
+                    PlayViewController *playVC = [[PlayViewController alloc]init];
+                    playVC.urlModel = _urlModel;
+                    
+                    [self presentViewController:playVC animated:YES completion:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                
+            }];
+
         }
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
